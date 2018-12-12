@@ -14,14 +14,18 @@ HOST = "172.19.2.209"
 USER = "admin"
 PASS = "M@dar123456"
 ITERATION = 1
-filename="a.txt"
+fileaddres = ""
 
-
-def upload(HOST, USER, PASS, filename):
+def upload(fileaddres):
     ftp = ftplib.FTP(HOST)
     ftp.login(USER, PASS)
-    ftp.storbinary('STOR '+filename, open(filename, 'rb'))
+    ftp.storbinary('STOR '+fileaddres, open(fileaddres, 'rb'))
     ftp.quit()
+    print "file :" + fileaddres + "  uploaded to " + HOST
+
+
+
+
 
 
 def fn(command):
@@ -33,11 +37,18 @@ def fn(command):
   print "SSH connection to %s established" %HOST
   #Gather commands and read the output from stdout
   stdin, stdout, stderr = client1.exec_command(command)
-  # print stdout.read()
   out = stdout.read()
-  chek(out)
+  return out
   print "Logged out of device %s" %HOST
   client1.close()
+
+
+
+
+
+
+
+
 def chek(out):
   if "mipsbe" in out:
     aname="mipsbe"
@@ -56,23 +67,36 @@ def chek(out):
   elif "general" in out:
     aname="geenral"
   else:
-    print "not in range!!!!"
-  print "mikrotik architecutre-name : " + aname
-  filefund(aname)
+    print "architecutre not fine!!!!"
 
-def filefund(anme):
+  print "mikrotik architecutre-name : " + aname
+  return filefund(aname)
+
+def filefund(aname):
   os.chdir("file")
   for file in glob.glob("*.npk"):
-    if file.split("-")[1] == "tile":
-         print file
+    if file.split("-")[1] == aname:
+      return file
+
+
+
+f = open('ip.txt','r')
+message = f.read()
+mel=message.split("\n")
+count = len(mel)
+for x in xrange(count-1):
+    mela = mel[x].split('/')
+    address = mela[0]
+    user = mela[1]
+    password = mela[2]
+f.close()
 #for loop to call above fn x times. Here x is set to 3
 for x in xrange(ITERATION):
-  # upload(HOST, USER, PASS, filename)
-  chekcommand = '/system resource print\n'
-  reboot = "/system reboot \n"
-  fn(chekcommand)
-  print "%s Iteration/s completed" %(x+1)
-  print "********"
+  fileaddres = chek(fn('/system resource print\n'))
+  upload(fileaddres)
+  fn('/system reboot \n')
+  print "%s completed" % HOST
+  print "****************************************"
 
 
 
