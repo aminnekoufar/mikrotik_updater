@@ -6,6 +6,7 @@ import sys
 import time
 import ftplib
 import os
+import glob
  
 
 #setting parameters like host IP, username, passwd and number of iterations to gather cmds
@@ -15,6 +16,7 @@ PASS = "M@dar123456"
 ITERATION = 1
 filename="a.txt"
 
+
 def upload(HOST, USER, PASS, filename):
     ftp = ftplib.FTP(HOST)
     ftp.login(USER, PASS)
@@ -22,7 +24,7 @@ def upload(HOST, USER, PASS, filename):
     ftp.quit()
 
 
-def fn():
+def fn(command):
   client1=paramiko.SSHClient()
   #Add missing client key
   client1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -30,7 +32,7 @@ def fn():
   client1.connect(HOST,username=USER,password=PASS)
   print "SSH connection to %s established" %HOST
   #Gather commands and read the output from stdout
-  stdin, stdout, stderr = client1.exec_command('/system resource print\n')
+  stdin, stdout, stderr = client1.exec_command(command)
   # print stdout.read()
   out = stdout.read()
   chek(out)
@@ -55,12 +57,20 @@ def chek(out):
     aname="geenral"
   else:
     print "not in range!!!!"
-  print aname
+  print "mikrotik architecutre-name : " + aname
+  filefund(aname)
 
+def filefund(anme):
+  os.chdir("file")
+  for file in glob.glob("*.npk"):
+    if file.split("-")[1] == "tile":
+         print file
 #for loop to call above fn x times. Here x is set to 3
 for x in xrange(ITERATION):
   # upload(HOST, USER, PASS, filename)
-  fn()
+  chekcommand = '/system resource print\n'
+  reboot = "/system reboot \n"
+  fn(chekcommand)
   print "%s Iteration/s completed" %(x+1)
   print "********"
 
