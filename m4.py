@@ -8,14 +8,6 @@ import ftplib
 import os
 import glob
  
-
-#setting parameters like host IP, username, passwd and number of iterations to gather cmds
-
-
-
-
-
-
 def upload(HOST, USER, PASS, fileaddres):
     ftp = ftplib.FTP(HOST)
     ftp.login(USER, PASS)
@@ -57,7 +49,7 @@ def chek(out):
   elif "general" in out:
     aname="geenral"
   else:
-    print "architecutre not fine!!!!"
+    print "architecutre not find!!!!"
 
   print "mikrotik architecutre-name : " + aname
   return filefund(aname)
@@ -90,21 +82,4 @@ for x in xrange(count-1):
   except:
     print "error in : " + HOST
 f.close()
-
-
-# HOST = "172.19.2.209"
-# USER = "admin"
-# PASS = "M@dar123456"
-# ITERATION = 1
-# fileaddres = ""
-
-
-
-# #for loop to call above fn x times. Here x is set to 3
-# for x in xrange(ITERATION):
-
-
-
-
-
 
