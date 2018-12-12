@@ -10,13 +10,13 @@ import glob
  
 
 #setting parameters like host IP, username, passwd and number of iterations to gather cmds
-HOST = "172.19.2.209"
-USER = "admin"
-PASS = "M@dar123456"
-ITERATION = 1
-fileaddres = ""
 
-def upload(fileaddres):
+
+
+
+
+
+def upload(HOST, USER, PASS, fileaddres):
     ftp = ftplib.FTP(HOST)
     ftp.login(USER, PASS)
     ftp.storbinary('STOR '+fileaddres, open(fileaddres, 'rb'))
@@ -24,11 +24,7 @@ def upload(fileaddres):
     print "file :" + fileaddres + "  uploaded to " + HOST
 
 
-
-
-
-
-def fn(command):
+def fn(HOST, USER, PASS, command):
   client1=paramiko.SSHClient()
   #Add missing client key
   client1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -38,15 +34,9 @@ def fn(command):
   #Gather commands and read the output from stdout
   stdin, stdout, stderr = client1.exec_command(command)
   out = stdout.read()
-  return out
   print "Logged out of device %s" %HOST
+  return out
   client1.close()
-
-
-
-
-
-
 
 
 def chek(out):
@@ -77,7 +67,8 @@ def filefund(aname):
   for file in glob.glob("*.npk"):
     if file.split("-")[1] == aname:
       return file
-
+    else:
+      return "error"
 
 
 f = open('ip.txt','r')
@@ -85,18 +76,33 @@ message = f.read()
 mel=message.split("\n")
 count = len(mel)
 for x in xrange(count-1):
+  try:
     mela = mel[x].split('/')
-    address = mela[0]
-    user = mela[1]
-    password = mela[2]
+    HOST = str(mela[0])
+    USER = str(mela[1])
+    PASS = str(mela[2])
+    fileaddres = chek(fn(HOST, USER, PASS, '/system resource print\n'))
+    upload(HOST, USER, PASS, fileaddres)
+    fn(HOST, USER, PASS, '/system reboot \n')
+    os.chdir("..")
+    print "%s completed" % HOST
+    print "****************************************"
+  except:
+    print "error in : " + HOST
 f.close()
-#for loop to call above fn x times. Here x is set to 3
-for x in xrange(ITERATION):
-  fileaddres = chek(fn('/system resource print\n'))
-  upload(fileaddres)
-  fn('/system reboot \n')
-  print "%s completed" % HOST
-  print "****************************************"
+
+
+# HOST = "172.19.2.209"
+# USER = "admin"
+# PASS = "M@dar123456"
+# ITERATION = 1
+# fileaddres = ""
+
+
+
+# #for loop to call above fn x times. Here x is set to 3
+# for x in xrange(ITERATION):
+
 
 
 
