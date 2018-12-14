@@ -95,7 +95,7 @@ for x in xrange(count):
     else:
       ftp = upload(HOST, USER, PASS, fileaddres)
       if ftp == "0":
-        # fn(HOST, USER, PASS, '/system reboot \n')
+        fn(HOST, USER, PASS, '/system reboot \n')
         os.chdir("..")
         print "%s Rebooted for Update" % HOST
         print "**Complated**"
